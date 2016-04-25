@@ -148,7 +148,7 @@ def harvestobs():
 
 		time.sleep(random.randint(mindelay, maxdelay))
 
-	con.close()
+	conn.close()
 
 #harvestspeciesids()
 #harvestobsids()
