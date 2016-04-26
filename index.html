@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+<style>
+html, body {
+	padding: 0px;
+	margin: 0px;
+	height: 100%;
+}
+#map {
+	height: 100%;
+	width: 100%;
+}
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+<script src="waarnemingen/data.js"></script>
+<script>
+
+var map = L.map("map").setView([50.3, 4.5], 8);
+
+L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {}).addTo(map);
+L.geoJson(data, {
+	onEachFeature: function(feature, layer) {
+		if (feature.properties && feature.properties.name) {
+			layer.bindPopup(feature.properties.name);
+		}
+	},
+	pointToLayer: function (feature, latlng) {
+		return L.circleMarker(latlng, {
+			radius: 5,
+			fillColor: "#cc6633",
+			color: "#fff",
+			weight: 2,
+			opacity: 1,
+			fillOpacity: 1
+		});
+	}
+}).addTo(map);
+
+</script>
+</body>
+</html>
