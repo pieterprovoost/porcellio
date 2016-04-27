@@ -41,7 +41,10 @@ var color = function(name) {
 
 var map = L.map("map").setView([50.3, 4.5], 8);
 
-L.tileLayer("http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png", {}).addTo(map);
+L.tileLayer("http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png", {
+	attribution: "Data <a href=\"http://waarnemingen.be\" target=\"_blank\">waarnemingen.be</a>",
+}).addTo(map);
+
 var layer = L.geoJson(data, {
 	onEachFeature: function(feature, layer) {
 		if (feature.properties && feature.properties.name) {
@@ -58,7 +61,7 @@ var layer = L.geoJson(data, {
 			fillOpacity: 1
 		});
 	}
-})
+});
 
 map.fitBounds(layer.getBounds());
 layer.addTo(map);
