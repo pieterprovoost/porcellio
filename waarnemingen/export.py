@@ -3,6 +3,8 @@ from geojson import FeatureCollection, Feature, Point
 import json
 import itertools
 
+decimals = 5
+
 def export():
 
 	conn = sqlite3.connect("pissebed.db")
@@ -19,7 +21,7 @@ def export():
 
 		if lon is not None and lat is not None:
 			feature = Feature(
-				geometry = Point((lon, lat)),
+				geometry = Point((round(lon, decimals), round(lat, decimals))),
 				properties = { "name": o[2] }
 			)
 			features.append(feature)
@@ -28,7 +30,7 @@ def export():
 
 	with open("data.js", "w") as outfile:
 		outfile.write("var data = ")
-		json.dump(collection, outfile)
+		outfile.write(json.dumps(collection, separators=(',',':')))
 		outfile.write(";")
 
 	conn.close()
@@ -42,7 +44,7 @@ def exportnames():
 	
 	with open("names.js", "w") as outfile:
 		outfile.write("var names = ")
-		json.dump(list(itertools.chain.from_iterable(names)), outfile)
+		outfile.write(json.dumps(list(itertools.chain.from_iterable(names)), separators=(',',':')))
 		outfile.write(";")
 
 	conn.close()

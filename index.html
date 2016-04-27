@@ -48,7 +48,8 @@ L.tileLayer("http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png", {
 var layer = L.geoJson(data, {
 	onEachFeature: function(feature, layer) {
 		if (feature.properties && feature.properties.name) {
-			layer.bindPopup(feature.properties.name);
+			var simple = feature.properties.name.toLowerCase().replace(" ", "-");
+			layer.bindPopup(feature.properties.name + "<br><a href=\"https://spinicornis.be/" + simple + "\" target=\"_blank\">http://spinicornis.be/" + simple + "</a>");
 		}
 	},
 	pointToLayer: function (feature, latlng) {
