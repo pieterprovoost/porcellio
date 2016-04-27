@@ -4,6 +4,9 @@
 <head>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+<link rel="stylesheet" href="easy-button.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" />
 <style>
 html, body {
 	padding: 0px;
@@ -20,13 +23,27 @@ html, body {
 
 <div id="map"></div>
 
+<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
 <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="easy-button.js"></script>
 <script src="waarnemingen/data.js"></script>
 <script>
 
+var color = function(name) {
+	var hash = 0;
+	for (var i = 0; i < name.length; i++) {
+		hash = name.charCodeAt(i) + ((hash << 5) - hash);
+	}
+	var c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+	var color = "#" + "00000".substring(0, 6 - c.length) + c;
+	console.log(color);
+	return color;
+};
+
 var map = L.map("map").setView([50.3, 4.5], 8);
 
-L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {}).addTo(map);
+L.tileLayer("http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png", {}).addTo(map);
 L.geoJson(data, {
 	onEachFeature: function(feature, layer) {
 		if (feature.properties && feature.properties.name) {
@@ -35,14 +52,18 @@ L.geoJson(data, {
 	},
 	pointToLayer: function (feature, latlng) {
 		return L.circleMarker(latlng, {
-			radius: 5,
-			fillColor: "#cc6633",
+			radius: 4,
+			fillColor: color(feature.properties.name),
 			color: "#fff",
 			weight: 2,
 			opacity: 1,
 			fillOpacity: 1
 		});
 	}
+}).addTo(map);
+
+L.easyButton("fa-bug", function(btn, map){
+	helloPopup.setLatLng(map.getCenter()).openOn(map);
 }).addTo(map);
 
 </script>

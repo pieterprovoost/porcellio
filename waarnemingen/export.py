@@ -1,12 +1,13 @@
 import sqlite3
 from geojson import FeatureCollection, Feature, Point
 import json
+import itertools
 
 def export():
 
 	conn = sqlite3.connect("pissebed.db")
 	c = conn.cursor()
-	obs = c.execute("select * from observations left join species on observations.species_id = species.id where ordo = 'Isopoda' limit 1000").fetchall()
+	obs = c.execute("select * from observations left join species on observations.species_id = species.id where ordo = 'Isopoda' order by name").fetchall()
 	print len(obs)
 
 	features = []
@@ -32,4 +33,19 @@ def export():
 
 	conn.close()
 
+def exportnames():
+
+	conn = sqlite3.connect("pissebed.db")
+	c = conn.cursor()
+	names = c.execute("select species.name from observations left join species on observations.species_id = species.id where ordo = 'Isopoda' group by species.name order by species.name").fetchall()
+	print len(names)
+	
+	with open("names.js", "w") as outfile:
+		outfile.write("var names = ")
+		json.dump(list(itertools.chain.from_iterable(names)), outfile)
+		outfile.write(";")
+
+	conn.close()
+
 export()
+exportnames()
