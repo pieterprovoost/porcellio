@@ -16,6 +16,11 @@ html, body {
 	height: 100%;
 	width: 100%;
 }
+.leaflet-control-layers-overlays {
+	-webkit-column-count: 3;
+	-moz-column-count: 3;
+	column-count: 3;
+}
 </style>
 </head>
 <body>
@@ -35,39 +40,47 @@ var color = function(name) {
 	}
 	var c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
 	var color = "#" + "00000".substring(0, 6 - c.length) + c;
-	console.log(color);
 	return color;
 };
 
-var map = L.map("map").setView([50.3, 4.5], 8);
+var layers = {};
 
-L.tileLayer("http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png", {
+var baselayer = L.tileLayer("http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png", {
 	attribution: "Data <a href=\"http://waarnemingen.be\" target=\"_blank\">waarnemingen.be</a>",
-}).addTo(map);
-
-var layer = L.geoJson(data, {
-	onEachFeature: function(feature, layer) {
-		if (feature.properties && feature.properties.name) {
-			var simple = feature.properties.name.toLowerCase().replace(" ", "-");
-			layer.bindPopup(feature.properties.name + "<br><a href=\"https://spinicornis.be/" + simple + "\" target=\"_blank\">http://spinicornis.be/" + simple + "</a>");
-		}
-	},
-	pointToLayer: function (feature, latlng) {
-		return L.circleMarker(latlng, {
-			radius: 4,
-			fillColor: color(feature.properties.name),
-			color: "#fff",
-			weight: 2,
-			opacity: 1,
-			fillOpacity: 1
-		});
-	}
 });
 
-map.fitBounds(layer.getBounds());
-layer.addTo(map);
+var map = L.map("map", {
+	center: [50.3, 4.5],
+	zoom: 8,
+	layers: [baselayer]
+});
 
+for (d in data) {
+	if (d != "null") {
+		var layer = L.geoJson(data[d], {
+			onEachFeature: function(feature, layer) {
+				var simple = d.toLowerCase().replace(" ", "-");
+				layer.bindPopup(d + "<br><a href=\"https://spinicornis.be/" + simple + "\" target=\"_blank\">http://spinicornis.be/" + simple + "</a>");
+			},
+			pointToLayer: function (feature, latlng) {
+				return L.circleMarker(latlng, {
+					radius: 4,
+					fillColor: color(d),
+					color: "#fff",
+					weight: 2,
+					opacity: 1,
+					fillOpacity: 1
+				});
+			}
+		});
+		layer.addTo(map);
+		layers[d] = layer;
+	}
+}
 
+L.control.layers(null, layers, {
+	collapsed: true
+}).addTo(map);
 
 </script>
 </body>

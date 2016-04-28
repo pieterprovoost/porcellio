@@ -12,26 +12,32 @@ def export():
 	obs = c.execute("select * from observations left join species on observations.species_id = species.id where ordo = 'Isopoda' order by name").fetchall()
 	print len(obs)
 
-	features = []
+	layers = {}
 
 	for o in obs:
 
+		name = o[2]
 		lon = o[3]
 		lat = o[4]
 
-		if lon is not None and lat is not None:
-			feature = Feature(
-				geometry = Point((round(lon, decimals), round(lat, decimals))),
-				properties = { "name": o[2] }
-			)
-			features.append(feature)
+		if name not in layers:
+			layers[name] = {"features": []}
+		else:
+			if lon is not None and lat is not None:
+				feature = Feature(
+					geometry = Point((round(lon, decimals), round(lat, decimals))),
+					properties = {}
+				)
+				layers[name]["features"].append(feature)
 
-	collection = FeatureCollection(features)
+	for layer in layers:
+		layers[layer] = FeatureCollection(layers[layer]["features"])
 
 	with open("data.js", "w") as outfile:
 		outfile.write("var data = ")
-		outfile.write(json.dumps(collection, separators=(',',':')))
+		outfile.write(json.dumps(layers, separators=(',',':')))
 		outfile.write(";")
+
 
 	conn.close()
 
