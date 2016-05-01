@@ -13,6 +13,7 @@ br = mechanize.Browser()
 br.set_handle_robots(False)
 mindelay = 1
 maxdelay = 1
+maxpages = 2
 
 def extractobs(content):
 	content = content.replace("\n", "").replace("\r", "")
@@ -118,6 +119,8 @@ def harvestobsids():
 				print "Error: " + str(e)
 
 			page = page + 1
+			if page > maxpages:
+				break
 			time.sleep(random.randint(mindelay, maxdelay))
 
 	conn.close()
@@ -151,7 +154,7 @@ def harvestobs():
 	conn.close()
 
 #harvestspeciesids()
-#harvestobsids()
+harvestobsids()
 harvestobs()
 
 
