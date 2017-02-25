@@ -22,19 +22,3 @@ def createdb():
 	conn.close()
 
 createdb()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
